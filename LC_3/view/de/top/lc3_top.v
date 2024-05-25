@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/23 23:30
-// Last Modified : 2024/05/25 13:11
+// Last Modified : 2024/05/25 13:21
 // File Name     : lc3_top.v
 // Description   :
 //         
@@ -175,7 +175,8 @@ device u_device(/*autoinst*/
         .dsr                    (pad_out_dsr[15:0]              ), //output[15:0]
         .mdr_out                (mdr[15:0]                      ), //output[15:0]
         .ready                  (ready                          ), //output
-        .int_priority           (int_priority[2:0]              )  //output //INST_NEW[2:0]
+        .int_priority           (int_priority[2:0]              ), //output[2:0]
+        .int_vec                (int_vec[7:0]                   )  //output //INST_NEW[7:0]
     );
 
     //Instance: /home/liurs/verilog/work/NES_SOC_RTL2SystemC/LC_3/view/de/mdl/intc.v

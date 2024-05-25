@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/16 22:51
-// Last Modified : 2024/05/25 12:29
+// Last Modified : 2024/05/25 13:20
 // File Name     : device.v
 // Description   :
 //         
@@ -27,7 +27,8 @@ module device(/*autoarg*/
     r_w, in_mux, bus, kbdr, 
     //Outputs
     kbsr, ddr, dsr, mdr_out, 
-    ready, int_priority
+    ready, int_priority, 
+    int_vec
 );
 
 input clk;
@@ -46,6 +47,7 @@ output [15:0] dsr;
 output [15:0] mdr_out;
 output ready;
 output [2:0] int_priority;
+output [7:0] int_vec;
 
 localparam IN_KBSR = 2'b00; 
 localparam IN_KBDR = 2'b01; 
@@ -84,8 +86,8 @@ wire                            ld_kbsr                         ;
 wire                            ld_dsr                          ;
 wire                            ld_ddr                          ;
 wire                            mem_en                          ;
-wire [2:0]                      int_priority                    ; // WIRE_NEW
 //Define instance wires here
+//WIRE_DEL: Wire int_priority has been deleted.
 //End of automatic wire
 //End of automatic define
 
@@ -185,7 +187,7 @@ localparam PL_NUM   = 8;
 //genvar i;
 generate
     for(i=0;i<PL_NUM;i=i+1) begin: intc_pl
-        assign int_pl[i] =  (&mem[INT_BASE_ADDR+4'h1+i<<4][7:6]) ||
+        assign int_vec[i] =  (&mem[INT_BASE_ADDR+4'h1+i<<4][7:6]) ||
                             (&mem[INT_BASE_ADDR+4'h3+i<<4][7:6]) ||
                             (&mem[INT_BASE_ADDR+4'h5+i<<4][7:6]) ||
                             (&mem[INT_BASE_ADDR+4'h7+i<<4][7:6]) ||
@@ -195,13 +197,13 @@ generate
                             (&mem[INT_BASE_ADDR+4'hf+i<<4][7:6]) ;
     end
 endgenerate
-assign int_priority[2:0] =  int_pl[7] ? 3'h7 :
-                            int_pl[6] ? 3'h6 :
-                            int_pl[5] ? 3'h5 :
-                            int_pl[4] ? 3'h4 :
-                            int_pl[3] ? 3'h3 :
-                            int_pl[2] ? 3'h2 :
-                            int_pl[1] ? 3'h1 :
+assign int_priority[2:0] =  int_vec[7] ? 3'h7 :
+                            int_vec[6] ? 3'h6 :
+                            int_vec[5] ? 3'h5 :
+                            int_vec[4] ? 3'h4 :
+                            int_vec[3] ? 3'h3 :
+                            int_vec[2] ? 3'h2 :
+                            int_vec[1] ? 3'h1 :
                             3'h0;
 
 //integer i;
