@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/16 22:51
-// Last Modified : 2024/05/18 15:23
+// Last Modified : 2024/05/25 12:29
 // File Name     : device.v
 // Description   :
 //         
@@ -27,7 +27,7 @@ module device(/*autoarg*/
     r_w, in_mux, bus, kbdr, 
     //Outputs
     kbsr, ddr, dsr, mdr_out, 
-    ready
+    ready, int_priority
 );
 
 input clk;
@@ -45,6 +45,7 @@ output [15:0] ddr;
 output [15:0] dsr;
 output [15:0] mdr_out;
 output ready;
+output [2:0] int_priority;
 
 localparam IN_KBSR = 2'b00; 
 localparam IN_KBDR = 2'b01; 
@@ -59,9 +60,15 @@ localparam MAR_DDR = 16'hFE06;
 localparam WRITE = 1'b1;
 localparam READ = 1'b0;
 
-localparam MEM_DEPTH = 2**16-256;
+localparam MEM_DEPTH = 256-1;
+localparam MEM_WIDTH = 256;
 
-reg [7:0] mem[MEM_DEPTH-1:0];
+reg [15:0] kbsr;
+reg [15:0] ddr;
+reg [15:0] dsr;
+reg ready;
+reg [7:0] mem[(MEM_DEPTH-1)*MEM_WIDTH:0];
+wire [7:0]                        int_pl                          ; // WIRE_NEW
 /*autodef*/
 //Start of automatic define
 //Start of automatic reg
@@ -69,9 +76,6 @@ reg [7:0] mem[MEM_DEPTH-1:0];
 reg  [15:0]                     mdr                             ;
 reg  [15:0]                     mar                             ;
 //Define combination registers here
-//REG_DEL: Register kbsr has been deleted.
-//REG_DEL: Register dsr has been deleted.
-//REG_DEL: Register ddr has been deleted.
 //End of automatic reg
 //Start of automatic wire
 //Define assign wires here
@@ -80,6 +84,7 @@ wire                            ld_kbsr                         ;
 wire                            ld_dsr                          ;
 wire                            ld_ddr                          ;
 wire                            mem_en                          ;
+wire [2:0]                      int_priority                    ; // WIRE_NEW
 //Define instance wires here
 //End of automatic wire
 //End of automatic define
@@ -157,19 +162,61 @@ always@(posedge clk or negedge rst_n) begin
     end
 end
 
-generate for(i=0;i<MEM_DEPTH;i+2) begin: ram
-    always@(posedge clk or negedge rst_n) begin
-        if(!rst_n)begin
-             mem[i] <= #`RD 8'h0;
-             mem[i+1] <= #`RD 8'h0;
-        end
-        else if (mem_en && r_w==WRITE && i==mar[15:0])begin
-             mem[i] <= #`RD mdr[7:0];
-             mem[i+1] <= #`RD mdr[15:8];
+genvar i, j;
+generate 
+    for(i=0;i<MEM_DEPTH;i=i+1) begin: ram_depth
+        for(j=0;j<MEM_WIDTH;j=j+2) begin: ram_width
+            always@(posedge clk or negedge rst_n) begin
+                if(!rst_n)begin
+                     mem[i*MEM_WIDTH+j] <= #`RD 8'h0;
+                     mem[i*MEM_WIDTH+j+1] <= #`RD 8'h0;
+                end
+                else if (mem_en && r_w==WRITE && (i*MEM_WIDTH+j)==mar[15:0])begin
+                     mem[i*MEM_WIDTH+j] <= #`RD mdr[7:0];
+                     mem[i*MEM_WIDTH+j+1] <= #`RD mdr[15:8];
+                end
+            end
         end
     end
 endgenerate
 
+localparam INT_BASE_ADDR = 16'h01_00;
+localparam PL_NUM   = 8;
+//genvar i;
+generate
+    for(i=0;i<PL_NUM;i=i+1) begin: intc_pl
+        assign int_pl[i] =  (&mem[INT_BASE_ADDR+4'h1+i<<4][7:6]) ||
+                            (&mem[INT_BASE_ADDR+4'h3+i<<4][7:6]) ||
+                            (&mem[INT_BASE_ADDR+4'h5+i<<4][7:6]) ||
+                            (&mem[INT_BASE_ADDR+4'h7+i<<4][7:6]) ||
+                            (&mem[INT_BASE_ADDR+4'h9+i<<4][7:6]) ||
+                            (&mem[INT_BASE_ADDR+4'hb+i<<4][7:6]) ||
+                            (&mem[INT_BASE_ADDR+4'hd+i<<4][7:6]) ||
+                            (&mem[INT_BASE_ADDR+4'hf+i<<4][7:6]) ;
+    end
+endgenerate
+assign int_priority[2:0] =  int_pl[7] ? 3'h7 :
+                            int_pl[6] ? 3'h6 :
+                            int_pl[5] ? 3'h5 :
+                            int_pl[4] ? 3'h4 :
+                            int_pl[3] ? 3'h3 :
+                            int_pl[2] ? 3'h2 :
+                            int_pl[1] ? 3'h1 :
+                            3'h0;
+
+//integer i;
+//initial begin
+//    for(i = 0; i<MEM_DEPTH;i=i+2) begin
+//        mem[i] <= #`RD 8'h0;
+//        mem[i+1] <= #`RD 8'h0;
+//    end
+//end
+//always@(posedge clk or negedge rst_n) begin
+//    if (mem_en && r_w==WRITE && i==mar[15:0])begin
+//        mem[mar[15:0]] <= #`RD mdr[7:0];
+//        mem[mar[15:0]+1] <= #`RD mdr[15:8];
+//    end
+//end
 
 endmodule
 //Instance .

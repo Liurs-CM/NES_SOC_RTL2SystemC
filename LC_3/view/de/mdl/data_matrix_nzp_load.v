@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/17 21:33
-// Last Modified : 2024/05/21 23:24
+// Last Modified : 2024/05/25 13:04
 // File Name     : data_matrix_nzp_load.v
 // Description   :
 //         
@@ -23,21 +23,18 @@
 module data_matrix_nzp_load(/*autoarg*/
     //Inputs
     clk, rst_n, ld_cc, 
-    psr_mux_sel, gate_psr_en, 
-    bus, 
+    psr_mux_sel, bus, 
     //Outputs
-    reg_n, reg_z, reg_p, psr
+    reg_n, reg_z, reg_p
 );
 input clk;
 input rst_n;
 input ld_cc;
 input psr_mux_sel;
-input gate_psr_en;
 input [15:0] bus;
 output reg_n;
 output reg_z;
 output reg_p;
-output [2:0] psr;
 
 /*autodef*/
 //Start of automatic define
@@ -73,8 +70,6 @@ end
 assign n_pc_11 = psr_mux_sel ? bus[2] : (bus[15]==1'b1 && !z_pc_10);
 assign z_pc_10 = psr_mux_sel ? bus[1] : (|bus[14:0]==1'b0);
 assign p_pc_9  = psr_mux_sel ? bus[0] : (bus[15]==1'b0 && !z_pc_10);
-
-assign psr[2:0] = gate_psr_en ? {reg_n, reg_z, reg_p} : 3'bzzz;
 
 endmodule
 //Instance .

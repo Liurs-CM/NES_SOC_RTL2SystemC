@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/17 23:36
-// Last Modified : 2024/05/17 23:42
+// Last Modified : 2024/05/24 01:24
 // File Name     : data_matrix_ir_load.v
 // Description   :
 //         
@@ -21,14 +21,17 @@
 
 module data_matrix_ir_load(/*autoarg*/
     //Inputs
-    bus, ld_ir, 
+    clk, rst_n, bus, ld_ir, 
     //Outputs
     ir
 );
+input clk;
+input rst_n;
 input [15:0] bus;
 input ld_ir;
 output [15:0] ir;
 
+reg [15:0] ir;
 /*autodef*/
 //Start of automatic define
 //Start of automatic reg
@@ -46,7 +49,7 @@ always@(posedge clk or negedge rst_n) begin
          ir[15:0] <= #`RD 16'h0;
     end
     else if (ld_ir)begin
-         ir[15:0] <= #`RD bus;
+         ir[15:0] <= #`RD bus[15:0];
     end
 end
 

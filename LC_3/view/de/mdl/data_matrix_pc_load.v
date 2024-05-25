@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/17 22:01
-// Last Modified : 2024/05/22 00:39
+// Last Modified : 2024/05/24 00:54
 // File Name     : data_matrix_pc_load.v
 // Description   :
 //         
@@ -21,12 +21,14 @@
 
 module data_matrix_pc_load(/*autoarg*/
     //Inputs
-    bus, ea, ld_pc, pc_sel, 
-    gate_pc_en, 
+    clk, rst_n, bus, ea, ld_pc, 
+    pc_sel, gate_pc_en, 
     gate_pc_minus_1_en, 
     //Outputs
     reg_pc, pc, pc_minus_one
 );
+input clk;
+input rst_n;
 input [15:0] bus;
 input [15:0] ea;
 input ld_pc;
@@ -36,6 +38,8 @@ input gate_pc_minus_1_en;
 output [15:0] reg_pc;
 output [15:0] pc;
 output [15:0] pc_minus_one;
+
+reg [15:0] reg_pc;
 
 /*autodef*/
 //Start of automatic define

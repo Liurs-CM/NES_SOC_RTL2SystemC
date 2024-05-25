@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/17 22:29
-// Last Modified : 2024/05/19 22:53
+// Last Modified : 2024/05/24 00:43
 // File Name     : data_matrix_effective_address.v
 // Description   :
 //         
@@ -57,9 +57,9 @@ wire [15:0]                     marmux                          ;
 //End of automatic wire
 //End of automatic define
 
-assign ir11_sext[15:0] = {5{ir_slice[10]}, ir_slice[10:0]};
-assign ir9_sext[15:0] = {7{ir_slice[8]}, ir_slice[8:0]};
-assign ir6_sext[15:0] = {10{ir_slice[5]}, ir_slice[5:0]};
+assign ir11_sext[15:0] = { {5{ir_slice[10]}}, ir_slice[10:0]};
+assign ir9_sext[15:0] = { {7{ir_slice[8]}}, ir_slice[8:0]};
+assign ir6_sext[15:0] = { {10{ir_slice[5]}}, ir_slice[5:0]};
 
 assign addr_ir[15:0] = (ir_mux==2'b00) ? ir11_sext[15:0] :
                        (ir_mux==2'b01) ? ir9_sext[15:0] :

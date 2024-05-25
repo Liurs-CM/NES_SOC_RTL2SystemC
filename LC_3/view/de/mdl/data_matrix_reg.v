@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/17 23:43
-// Last Modified : 2024/05/19 18:16
+// Last Modified : 2024/05/24 01:00
 // File Name     : data_matrix_reg.v
 // Description   :
 //         
@@ -21,11 +21,13 @@
 
 module data_matrix_reg(/*autoarg*/
     //Inputs
-    ir_slice, bus, dr_mux, 
-    ld_reg, 
+    clk, rst_n, ir_slice, bus, 
+    dr_mux, sr1_mux, ld_reg, 
     //Outputs
     sr1_out, sr2_out
 );
+input clk;
+input rst_n;
 input [11:0] ir_slice;
 input [15:0] bus;
 input [1:0] dr_mux;

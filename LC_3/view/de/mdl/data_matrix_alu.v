@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/18 10:29
-// Last Modified : 2024/05/18 10:54
+// Last Modified : 2024/05/24 00:42
 // File Name     : data_matrix_alu.v
 // Description   :
 //         
@@ -48,7 +48,7 @@ wire [15:0]                     alu_mux                         ;
 //End of automatic wire
 //End of automatic define
 
-assign imm5_sext[15:0] = {11{ir_slice[4]}, ir_slice[4:0]};
+assign imm5_sext[15:0] = { {11{ir_slice[4]}}, ir_slice[4:0] };
 assign sr2_mux[15:0] = ir_slice[5] ? imm5_sext[15:0] : sr2[15:0];
 
 assign alu_mux[15:0] = (aluk[1:0]==2'b00) ? sr1[15:0] + sr2_mux[15:0] : //add
