@@ -1,0 +1,14 @@
+/home/liurs/verilog/work/NES_SOC_RTL2SystemC/LC_3/view/de/define/lc3_top_define.v
+
+/home/liurs/verilog/work/NES_SOC_RTL2SystemC/LC_3/view/de/mdl/ctrl.v
+/home/liurs/verilog/work/NES_SOC_RTL2SystemC/LC_3/view/de/mdl/data_matrix_alu.v
+/home/liurs/verilog/work/NES_SOC_RTL2SystemC/LC_3/view/de/mdl/data_matrix_effective_address.v
+/home/liurs/verilog/work/NES_SOC_RTL2SystemC/LC_3/view/de/mdl/data_matrix_ir_load.v
+/home/liurs/verilog/work/NES_SOC_RTL2SystemC/LC_3/view/de/mdl/data_matrix_nzp_load.v
+/home/liurs/verilog/work/NES_SOC_RTL2SystemC/LC_3/view/de/mdl/data_matrix_pc_load.v
+/home/liurs/verilog/work/NES_SOC_RTL2SystemC/LC_3/view/de/mdl/data_matrix_reg.v
+/home/liurs/verilog/work/NES_SOC_RTL2SystemC/LC_3/view/de/mdl/data_matrix.v
+/home/liurs/verilog/work/NES_SOC_RTL2SystemC/LC_3/view/de/mdl/device.v
+/home/liurs/verilog/work/NES_SOC_RTL2SystemC/LC_3/view/de/mdl/intc.v
+
+/home/liurs/verilog/work/NES_SOC_RTL2SystemC/LC_3/view/de/top/lc3_top.v
