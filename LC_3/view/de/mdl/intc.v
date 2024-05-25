@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/20 22:57
-// Last Modified : 2024/05/25 13:13
+// Last Modified : 2024/05/26 02:38
 // File Name     : intc.v
 // Description   :
 //         
@@ -32,8 +32,9 @@ module intc(/*autoarg*/
     ld_saved_ssp, sp_mux_sel, 
     sr1_reg, 
     //Outputs
-    table_vector, priv, acv, int, 
-    reg_prority, stack_point
+    table_vector, priv, acv, 
+    interrupt, reg_prority, 
+    stack_point
 );
 
 //table and vector
@@ -55,7 +56,7 @@ input [2:0] int_priority;
 input [15:0] bus;
 output priv;
 output acv;
-output int;
+output interrupt;
 output [2:0] reg_prority;
 //stack point
 input ld_saved_usp;
@@ -125,7 +126,7 @@ always@(posedge clk or negedge rst_n) begin
          reg_prority[2:0] <= #`RD prority_mux[2:0];
     end
 end
-assign int = (int_priority[2:0] > reg_prority[2:0]) ? 1'b1 : 1'b0;
+assign interrupt = (int_priority[2:0] > reg_prority[2:0]) ? 1'b1 : 1'b0;
 
 //acv
 assign addr[15:0] = bus[15:0];

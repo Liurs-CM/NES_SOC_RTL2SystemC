@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/16 22:28
-// Last Modified : 2024/05/25 13:12
+// Last Modified : 2024/05/26 02:35
 // File Name     : ctrl.v
 // Description   :
 //         
@@ -23,8 +23,8 @@
 module ctrl(/*autoarg*/
     //Inputs
     clk, rst_n, reg_n, reg_z, 
-    reg_p, acv, int, ready, 
-    ir, psr_15, 
+    reg_p, acv, interrupt, 
+    ready, ir, psr_15, 
     //Outputs
     ld_mar, ld_mdr, ld_ir, ld_reg, 
     ld_cc, ld_pc, ld_priv, 
@@ -49,7 +49,7 @@ input reg_n;
 input reg_z;
 input reg_p;
 input acv;
-input int;
+input interrupt;
 input ready;
 input [15:0] ir;
 input psr_15;
@@ -222,7 +222,7 @@ always@(*) begin
                     nxt_state[5:0] = LDI_DEC;
         end
         FETCH: begin
-            if(int)
+            if(interrupt)
                     nxt_state[5:0] = INT_CHK;
             else
                     nxt_state[5:0] = FETCH_ACV;

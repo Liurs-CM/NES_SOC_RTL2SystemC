@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/23 23:30
-// Last Modified : 2024/05/25 13:21
+// Last Modified : 2024/05/26 02:38
 // File Name     : lc3_top.v
 // Description   :
 //         
@@ -35,7 +35,7 @@ output [15:0] pad_kbsr;
 output [15:0] pad_ddr;
 output [15:0] pad_out_dsr;
 
-wire [15:0]                     ir                              ; // WIRE_NEW
+wire [15:0] ir; // WIRE_NEW
 /*autodef*/
 //Start of automatic define
 //Start of automatic reg
@@ -49,7 +49,7 @@ wire                            reg_n                           ;
 wire                            reg_z                           ;
 wire                            reg_p                           ;
 wire                            acv                             ;
-wire                            int                             ;
+wire                            interrupt                       ; // WIRE_NEW
 wire                            ready                           ;
 wire                            priv                            ;
 wire                            ld_mar                          ;
@@ -89,10 +89,10 @@ wire                            set_priv                        ;
 wire [15:0]                     in_mux                          ;
 wire [15:0]                     bus                             ;
 wire [15:0]                     mdr                             ;
+wire [2:0]                      int_priority                    ;
 wire [7:0]                      int_vec                         ;
 wire [15:0]                     table_vector                    ;
 wire                            psr_mux_sel                     ;
-wire [2:0]                      int_priority                    ;
 wire [2:0]                      reg_prority                     ;
 wire [15:0]                     sr1_out                         ;
 wire [15:0]                     stack_point                     ;
@@ -105,7 +105,7 @@ wire [15:0]                     sr2_out                         ;
 wire [15:0]                     reg_pc                          ;
 wire [15:0]                     ea                              ;
 wire                            gate_pc_en                      ;
-//WIRE_DEL: Wire pc_sel has been deleted.
+//WIRE_DEL: Wire int has been deleted.
 //End of automatic wire
 //End of automatic define
 
@@ -117,7 +117,7 @@ ctrl u_ctrl(/*autoinst*/
         .reg_z                  (reg_z                          ), //input
         .reg_p                  (reg_p                          ), //input
         .acv                    (acv                            ), //input
-        .int                    (int                            ), //input
+        .interrupt              (interrupt                      ), //input //INST_NEW
         .ready                  (ready                          ), //input
         .ir                     (ir[15:0]                       ), //input[15:0]
         .psr_15                 (priv                           ), //input
@@ -155,7 +155,7 @@ ctrl u_ctrl(/*autoinst*/
         .mio_en                 (mio_en                         ), //output
         .r_w                    (r_w                            ), //output
         .set_priv               (set_priv                       )  //output
-        //INST_DEL: Port ld_ben has been deleted.
+        //INST_DEL: Port int has been deleted.
     );
 
     //Instance: /home/liurs/verilog/work/NES_SOC_RTL2SystemC/LC_3/view/de/mdl/device.v
@@ -198,13 +198,14 @@ intc u_intc(/*autoinst*/
         .bus                    (bus[15:0]                      ), //input[15:0]
         .priv                   (priv                           ), //output
         .acv                    (acv                            ), //output
-        .int                    (int                            ), //output
+        .interrupt              (interrupt                      ), //output //INST_NEW
         .reg_prority            (reg_prority[2:0]               ), //output[2:0]
         .ld_saved_usp           (ld_saved_usp                   ), //input
         .ld_saved_ssp           (ld_saved_ssp                   ), //input
         .sp_mux_sel             (spmux[1:0]                     ), //input[1:0]
         .sr1_reg                (sr1_out[15:0]                  ), //input[15:0]
         .stack_point            (stack_point[15:0]              )  //output[15:0]
+        //INST_DEL: Port int has been deleted.
     );
 
     //Instance: /home/liurs/verilog/work/NES_SOC_RTL2SystemC/LC_3/view/de/mdl/data_matrix.v
