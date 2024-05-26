@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/17 22:01
-// Last Modified : 2024/05/24 00:54
+// Last Modified : 2024/05/26 12:28
 // File Name     : data_matrix_pc_load.v
 // Description   :
 //         
@@ -22,8 +22,7 @@
 module data_matrix_pc_load(/*autoarg*/
     //Inputs
     clk, rst_n, bus, ea, ld_pc, 
-    pc_sel, gate_pc_en, 
-    gate_pc_minus_1_en, 
+    pc_sel, 
     //Outputs
     reg_pc, pc, pc_minus_one
 );
@@ -33,8 +32,6 @@ input [15:0] bus;
 input [15:0] ea;
 input ld_pc;
 input [1:0] pc_sel;
-input gate_pc_en;
-input gate_pc_minus_1_en;
 output [15:0] reg_pc;
 output [15:0] pc;
 output [15:0] pc_minus_one;
@@ -46,7 +43,6 @@ reg [15:0] reg_pc;
 //Start of automatic reg
 //Define flip-flop registers here
 //Define combination registers here
-//REG_DEL: Register reg_pc has been deleted.
 //End of automatic reg
 //Start of automatic wire
 //Define assign wires here
@@ -68,8 +64,8 @@ always@(posedge clk or negedge rst_n) begin
     end
 end
 
-assign pc[15:0] = gate_pc_en ? reg_pc[15:0] : 16'hzzzz;
-assign pc_minus_one[15:0] = gate_pc_minus_1_en ? (reg_pc[15:0]-1'b1) : 16'hzzzz;
+assign pc[15:0] =  reg_pc[15:0];
+assign pc_minus_one[15:0] = reg_pc[15:0]-1'b1;
 
 endmodule
 //Instance .

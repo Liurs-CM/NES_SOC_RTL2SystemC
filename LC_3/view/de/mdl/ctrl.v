@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/16 22:28
-// Last Modified : 2024/05/26 02:35
+// Last Modified : 2024/05/26 12:18
 // File Name     : ctrl.v
 // Description   :
 //         
@@ -375,47 +375,47 @@ end
 
 assign st[5:0] = cur_state[5:0];
 //data control
-assign r_w = (st== LD |st== ST |st== LDR |st== STR |st== RTI |st== LDI |st== STI |st== FETCH |st== LDI_MAR |st== STI_MAR2 |st== INT_MAR1 |st== RTI_MAR2 |st== INT_MAR2 |st== INT_MAR3 );
-assign mio_en = (st== RSV |st== TRAP |st== STX_ACV |st== LDI_DEC |st== LDX_DEC |st== FETCH_MDR |st== STI_DEC |st== RTI_MDR1 |st== RTI_MDR2 |st== INT_MDR2 |st== RTI_VEC0 |st== ACV_1 |st== INT_CHK |st== INT_MDR3 |st== ACV_2 |st== ACV_3 |st== ACV_4 |st== ACV_5 );
-assign aluk[1] = (st== FETCH_IR );
-assign aluk[0] = (st== DECODE );
-assign psrmux = (st== ADD |st== AND |st== NOT |st== LEA |st== JSR_R_PC |st== JSR_O_PC |st== LDX_DR |st== RTI_CHK2 |st== INT_MAR1 |st== RTI_MAR2 |st== S_SSP_USP |st== INT_MAR2 |st== RTI_S_SP );
-assign vecmux[1] = (st== ADD |st== AND |st== NOT |st== LDX_DR |st== RTI_PSR );
-assign vecmux[0] = (st== JMP |st== TRAP |st== FETCH |st== JSR_R_PC |st== JSR_O_PC |st== BR_O_PC |st== RTI_PC |st== INT_PCL );
-assign tablemux = (st== RSV |st== RTI_PSR |st== RTI_VEC0 |st== TRAP_CHK |st== ACV_1 |st== INT_CHK |st== ACV_2 |st== ACV_3 |st== ACV_4 |st== ACV_5 );
-assign marmux = (st== RTI_PSR |st== INT_CHK );
-assign spmux[1] = (st== S_SSP_USP |st== RTI_S_SP );
-assign spmux[0] = 1'b0;
-assign addr2mux[1] = (st== LD |st== ST |st== LDR |st== STR |st== LDI |st== STI |st== FETCH |st== STX_ACV |st== LDI_MAR |st== STI_MAR2 );
-assign addr2mux[0] = (st== RSV |st== RTI_VEC0 |st== TRAP_CHK |st== ACV_1 |st== INT_CHK |st== ACV_2 |st== ACV_3 |st== ACV_4 |st== ACV_5 );
-assign addr1mux = (st== FETCH |st== JSR_R_PC |st== JSR_O_PC );
-assign sr1mux[1] = (st== LDI_MAR |st== LDX_DR |st== FETCH_IR |st== STI_MAR2 |st== RTI_PC |st== RTI_PSR |st== INT_PCL );
-assign sr1mux[0] = (st== ADD |st== AND |st== NOT |st== JMP |st== STX_ACV );
-assign drmux[1] = (st== LD |st== ST |st== LDR |st== STR |st== RTI |st== LDI |st== STI |st== LEA |st== TRAP_CHK );
-assign drmux[0] = (st== INT_MAR3 );
-assign pcmux[1] = (st== INT_MDR2 );
-assign pcmux[0] = (st== RSV |st== TRAP |st== RTI_VEC0 |st== ACV_1 |st== INT_CHK |st== ACV_2 |st== ACV_3 |st== ACV_4 |st== ACV_5 );
+assign ld_mar = (st== LD |st== ST |st== LDR |st== STR |st== RTI |st== LDI |st== STI |st== FETCH |st== LDI_MAR |st== STI_MAR2 |st== INT_MAR1 |st== RTI_MAR2 |st== INT_MAR2 |st== INT_MAR3 );
+assign ld_mdr = (st== RSV |st== TRAP |st== STX_ACV |st== LDI_DEC |st== LDX_DEC |st== FETCH_MDR |st== STI_DEC |st== RTI_MDR1 |st== RTI_MDR2 |st== INT_MDR2 |st== RTI_VEC0 |st== ACV_1 |st== INT_CHK |st== INT_MDR3 |st== ACV_2 |st== ACV_3 |st== ACV_4 |st== ACV_5 );
+assign ld_ir = (st== FETCH_IR );
+assign ld_ben = (st== DECODE );
+assign ld_reg = (st== ADD |st== AND |st== NOT |st== LEA |st== JSR_R_PC |st== JSR_O_PC |st== LDX_DR |st== RTI_CHK2 |st== INT_MAR1 |st== RTI_MAR2 |st== S_SSP_USP |st== INT_MAR2 |st== RTI_S_SP );
+assign ld_cc = (st== ADD |st== AND |st== NOT |st== LDX_DR |st== RTI_PSR );
+assign ld_pc = (st== JMP |st== TRAP |st== FETCH |st== JSR_R_PC |st== JSR_O_PC |st== BR_O_PC |st== RTI_PC |st== INT_PCL );
+assign ld_priv = (st== RSV |st== RTI_PSR |st== RTI_VEC0 |st== TRAP_CHK |st== ACV_1 |st== INT_CHK |st== ACV_2 |st== ACV_3 |st== ACV_4 |st== ACV_5 );
+assign ld_priority = (st== RTI_PSR |st== INT_CHK );
+assign ld_saved_ssp = (st== S_SSP_USP |st== RTI_S_SP );
+assign ld_saved_usp = 1'b0;
+assign ld_acv = (st== LD |st== ST |st== LDR |st== STR |st== LDI |st== STI |st== FETCH |st== STX_ACV |st== LDI_MAR |st== STI_MAR2 );
+assign ld_vector = (st== RSV |st== RTI_VEC0 |st== TRAP_CHK |st== ACV_1 |st== INT_CHK |st== ACV_2 |st== ACV_3 |st== ACV_4 |st== ACV_5 );
+assign gate_pc = (st== FETCH |st== JSR_R_PC |st== JSR_O_PC );
+assign gate_mdr = (st== LDI_MAR |st== LDX_DR |st== FETCH_IR |st== STI_MAR2 |st== RTI_PC |st== RTI_PSR |st== INT_PCL );
+assign gate_alu = (st== ADD |st== AND |st== NOT |st== JMP |st== STX_ACV );
+assign gate_marmux = (st== LD |st== ST |st== LDR |st== STR |st== RTI |st== LDI |st== STI |st== LEA |st== TRAP_CHK );
+assign gate_vector = (st== INT_MAR3 );
+assign gate_pc_m1 = (st== INT_MDR2 );
+assign gate_psr = (st== RSV |st== TRAP |st== RTI_VEC0 |st== ACV_1 |st== INT_CHK |st== ACV_2 |st== ACV_3 |st== ACV_4 |st== ACV_5 );
 assign gate_sp = (st== RTI_CHK2 |st== INT_MAR1 |st== RTI_MAR2 |st== S_SSP_USP |st== INT_MAR2 |st== RTI_S_SP );
-assign gate_psr = (st== JMP |st== RTI_PC |st== INT_PCL );
-assign gate_pc_m1 = (st== JSR_R_PC |st== JSR_O_PC |st== BR_O_PC );
-assign gate_vector = (st== RTI_CHK2 |st== INT_MAR1 |st== RTI_MAR2 |st== S_SSP_USP |st== INT_MAR2 |st== RTI_S_SP );
-assign gate_marmux = (st== JSR_R_PC |st== JSR_O_PC );
-assign gate_alu = (st== ADD |st== AND |st== LDR |st== STR |st== NOT |st== JMP |st== JSR_R_PC );
-assign gate_mdr = (st== RTI |st== RTI_CHK2 |st== INT_MAR1 |st== RTI_MAR2 |st== S_SSP_USP |st== INT_MAR2 |st== RTI_S_SP );
-assign gate_pc = (st== LD |st== ST |st== LDI |st== STI |st== LEA |st== JSR_O_PC |st== BR_O_PC );
-assign ld_vector = (st== LD |st== ST |st== RTI |st== LDI |st== STI |st== LEA |st== JSR_R_PC |st== BR_O_PC );
-assign ld_acv = (st== LDR |st== STR |st== RTI |st== JSR_R_PC );
-assign ld_saved_usp = (st== RTI_CHK2 );
-assign ld_saved_ssp = (st== INT_MAR1 |st== RTI_MAR2 |st== INT_MAR2 );
-assign ld_priority = (st== LD |st== ST |st== LDR |st== STR |st== RTI |st== LDI |st== STI |st== LEA );
-assign ld_priv = (st== RSV |st== RTI_VEC0 |st== ACV_1 |st== INT_CHK |st== ACV_2 |st== ACV_3 |st== ACV_4 |st== ACV_5 );
-assign ld_pc = (st== INT_CHK );
-assign ld_cc = (st== RSV |st== RTI_VEC0 |st== INT_CHK );
-assign ld_reg = (st== RTI_PSR );
-assign ld_ben = (st== AND |st== NOT |st== JMP |st== STX_ACV );
-assign ld_ir = (st== NOT |st== JMP |st== STX_ACV );
-assign ld_mdr = (st== ST_MEM |st== LDI_DEC |st== LDX_DEC |st== FETCH_MDR |st== STI_DEC |st== RTI_MDR1 |st== RTI_MDR2 |st== INT_WR1 |st== INT_WR2 |st== INT_MDR3 );
-assign ld_mar = (st== ST_MEM |st== INT_WR1 |st== INT_WR2 );
+assign pcmux[0] = (st== JMP |st== RTI_PC |st== INT_PCL );
+assign pcmux[1] = (st== JSR_R_PC |st== JSR_O_PC |st== BR_O_PC );
+assign drmux[0] = (st== RTI_CHK2 |st== INT_MAR1 |st== RTI_MAR2 |st== S_SSP_USP |st== INT_MAR2 |st== RTI_S_SP );
+assign drmux[1] = (st== JSR_R_PC |st== JSR_O_PC );
+assign sr1mux[0] = (st== ADD |st== AND |st== LDR |st== STR |st== NOT |st== JMP |st== JSR_R_PC );
+assign sr1mux[1] = (st== RTI |st== RTI_CHK2 |st== INT_MAR1 |st== RTI_MAR2 |st== S_SSP_USP |st== INT_MAR2 |st== RTI_S_SP );
+assign addr1mux = (st== LD |st== ST |st== LDI |st== STI |st== LEA |st== JSR_O_PC |st== BR_O_PC );
+assign addr2mux[0] = (st== LD |st== ST |st== RTI |st== LDI |st== STI |st== LEA |st== JSR_R_PC |st== BR_O_PC );
+assign addr2mux[1] = (st== LDR |st== STR |st== RTI |st== JSR_R_PC );
+assign spmux[0] = (st== RTI_CHK2 );
+assign spmux[1] = (st== INT_MAR1 |st== RTI_MAR2 |st== INT_MAR2 );
+assign marmux = (st== LD |st== ST |st== LDR |st== STR |st== RTI |st== LDI |st== STI |st== LEA );
+assign tablemux = (st== RSV |st== RTI_VEC0 |st== ACV_1 |st== INT_CHK |st== ACV_2 |st== ACV_3 |st== ACV_4 |st== ACV_5 );
+assign vecmux[0] = (st== INT_CHK );
+assign vecmux[1] = (st== RSV |st== RTI_VEC0 |st== INT_CHK );
+assign psrmux = (st== RTI_PSR );
+assign aluk[0] = (st== AND |st== NOT |st== JMP |st== STX_ACV );
+assign aluk[1] = (st== NOT |st== JMP |st== STX_ACV );
+assign mio_en = (st== ST_MEM |st== LDI_DEC |st== LDX_DEC |st== FETCH_MDR |st== STI_DEC |st== RTI_MDR1 |st== RTI_MDR2 |st== INT_WR1 |st== INT_WR2 |st== INT_MDR3 );
+assign r_w = (st== ST_MEM |st== INT_WR1 |st== INT_WR2 );
 assign set_priv = 1'b0;
 
 endmodule

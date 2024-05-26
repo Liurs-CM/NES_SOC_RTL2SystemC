@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/16 22:51
-// Last Modified : 2024/05/25 13:20
+// Last Modified : 2024/05/26 12:25
 // File Name     : device.v
 // Description   :
 //         
@@ -62,14 +62,14 @@ localparam MAR_DDR = 16'hFE06;
 localparam WRITE = 1'b1;
 localparam READ = 1'b0;
 
-localparam MEM_DEPTH = 256-1;
+localparam MEM_DEPTH = 255;
 localparam MEM_WIDTH = 256;
 
 reg [15:0] kbsr;
 reg [15:0] ddr;
 reg [15:0] dsr;
 reg ready;
-reg [7:0] mem[(MEM_DEPTH-1)*MEM_WIDTH:0];
+reg [7:0] mem[MEM_DEPTH*MEM_WIDTH:0];
 wire [7:0]                        int_pl                          ; // WIRE_NEW
 /*autodef*/
 //Start of automatic define
