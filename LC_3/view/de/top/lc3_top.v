@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/23 23:30
-// Last Modified : 2024/05/26 02:38
+// Last Modified : 2024/05/26 12:29
 // File Name     : lc3_top.v
 // Description   :
 //         
@@ -284,11 +284,11 @@ data_matrix_pc_load u_data_matrix_pc_load(/*autoinst*/
         .ea                     (ea[15:0]                       ), //input[15:0]
         .ld_pc                  (ld_pc                          ), //input
         .pc_sel                 (pcmux[1:0]                     ), //input[1:0]
-        .gate_pc_en             (gate_pc_en                     ), //input
-        .gate_pc_minus_1_en     (gate_pc_m1                     ), //input
         .reg_pc                 (reg_pc[15:0]                   ), //output[15:0]
         .pc                     (pc[15:0]                       ), //output[15:0]
         .pc_minus_one           (pc_minus_one[15:0]             )  //output[15:0]
+        //INST_DEL: Port gate_pc_en has been deleted.
+        //INST_DEL: Port gate_pc_minus_1_en has been deleted.
     );
 
     //Instance: /home/liurs/verilog/work/NES_SOC_RTL2SystemC/LC_3/view/de/mdl/data_matrix_reg.v
