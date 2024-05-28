@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/17 22:01
-// Last Modified : 2024/05/26 12:28
+// Last Modified : 2024/05/28 22:30
 // File Name     : data_matrix_pc_load.v
 // Description   :
 //         
@@ -57,7 +57,8 @@ assign pc_mux[15:0] = (pc_sel[1:0]==2'b00) ? reg_pc[15:0] + 1'b1 :
 
 always@(posedge clk or negedge rst_n) begin
     if(!rst_n)begin
-         reg_pc[15:0] <= #`RD 16'h0;
+//         reg_pc[15:0] <= #`RD 16'h0;
+         reg_pc[15:0] <= #`RD 16'h3000;
     end
     else if (ld_pc)begin
          reg_pc[15:0] <= #`RD pc_mux[15:0];
