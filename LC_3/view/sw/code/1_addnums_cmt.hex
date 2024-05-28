@@ -1,0 +1,11 @@
+3000 ;start the program at location x3000
+5260 ;clear R1, to be used for the running sum
+5920 ;clear R4, to be used as a counter
+192A ;load R4 with #10, the number of times to add
+E4FC ;load the starting address of the data
+6680 ;load the next number to be added
+14A1 ;increment the pointer
+1243 ;add the next number to the running sum
+193F ;decrement the counter
+03FB ;do it again if the counter is not yet zero
+F025 ;halt
