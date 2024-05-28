@@ -13,16 +13,16 @@ st=[
 [18,"uncond",],
 [35,"uncond",],
 [23,"uncond",],
-[20,"ir11",21],
+[20,"ir[11]",21],
 [18,"uncond",],
 [35,"uncond",],
 [23,"uncond",],
-[36,"psr15",44],
+[36,"psr_15",44],
 [18,"uncond",],
 [17,"uncond",],
 [19,"uncond",],
 [18,"uncond",],
-[37,"psr15",45],
+[37,"psr_15",45],
 [18,"uncond",],
 [47,"uncond",],
 [16,"ready",18],
@@ -43,7 +43,7 @@ st=[
 [23,"uncond",],
 ["ir[15:12]","uncond",],
 [28,"acv",60],
-[51,"psr15",59],
+[51,"psr_15",59],
 [25,"acv",57],
 [36,"ready",38],
 [41,"uncond",],
@@ -56,9 +56,9 @@ st=[
 [45,"uncond",],
 [37,"uncond",],
 [52,"uncond",],
-[37,"psr15",45],
+[37,"psr_15",45],
 [45,"uncond",],
-[37,"psr15",45],
+[37,"psr_15",45],
 [51,"uncond",],
 [18,"uncond",],
 [52,"ready",54],
@@ -83,9 +83,9 @@ for one in st:
         else:
             print(st_array[i]+": begin")
             print("\tif("+one[1]+")")
-            print("\t\tnxt_state <= #`RD "+st_array[one[0]]+";")
-            print("\telse")
             print("\t\tnxt_state <= #`RD "+st_array[one[2]]+";")
+            print("\telse")
+            print("\t\tnxt_state <= #`RD "+st_array[one[0]]+";")
             print("end")
     else:
         print(st_array[i]+":\tnxt_state <= #`RD "+one[0]+";")
