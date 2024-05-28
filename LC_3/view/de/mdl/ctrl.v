@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/16 22:28
-// Last Modified : 2024/05/26 12:18
+// Last Modified : 2024/05/28 23:43
 // File Name     : ctrl.v
 // Description   :
 //         
@@ -18,6 +18,7 @@
 // ---------------------------------------------------------------------------------
 // 2024/05/16   liurs           1.0                     Original
 // 2024/05/23   liurs           1.0                     Add 42 ctrl signal output
+// 2024/05/28   liurs           1.1                     Fix ir state cond err
 // -FHDR----------------------------------------------------------------------------
 
 module ctrl(/*autoarg*/
@@ -179,179 +180,184 @@ always@(*) begin
     case(cur_state)
         BR: begin
             if(ben)
-                nxt_state[5:0] = BR_O_PC;
+                nxt_state <= #`RD BR_O_PC;
             else
-                nxt_state[5:0] = FETCH;
+                nxt_state <= #`RD FETCH;
         end
-        ADD:    nxt_state[5:0] = FETCH;
-        LD:     nxt_state[5:0] = LDX_ACV;
-        ST:     nxt_state[5:0] = STX_ACV;
-        JSR:    nxt_state[5:0] = STX_ACV;
-        AND:    nxt_state[5:0] = FETCH;
-        LDR:    nxt_state[5:0] = LDX_ACV;
-        STR:    nxt_state[5:0] = STX_ACV;
+        ADD:    nxt_state <= #`RD FETCH;
+        LD:     nxt_state <= #`RD LDX_ACV;
+        ST:     nxt_state <= #`RD STX_ACV;
+        JSR: begin
+            if(ir[11])
+                nxt_state <= #`RD JSR_O_PC;
+            else
+                nxt_state <= #`RD JSR_R_PC;
+        end
+        AND:    nxt_state <= #`RD FETCH;
+        LDR:    nxt_state <= #`RD LDX_ACV;
+        STR:    nxt_state <= #`RD STX_ACV;
         RTI: begin
             if(psr_15)
-                nxt_state[5:0] = RTI_VEC0;
+                nxt_state <= #`RD RTI_VEC0;
             else
-                nxt_state[5:0] = RTI_MDR1;
+                nxt_state <= #`RD RTI_MDR1;
         end
-        NOT:    nxt_state[5:0] = FETCH;
-        LDI:    nxt_state[5:0] = LDI_ACV;
-        STI:    nxt_state[5:0] = STI_ACV;
-        JMP:    nxt_state[5:0] = FETCH;
+        NOT:    nxt_state <= #`RD FETCH;
+        LDI:    nxt_state <= #`RD LDI_ACV;
+        STI:    nxt_state <= #`RD STI_ACV;
+        JMP:    nxt_state <= #`RD FETCH;
         RSV: begin
             if(psr_15)
-                nxt_state[5:0] = S_SSP_USP;
+                nxt_state <= #`RD S_SSP_USP;
             else
-                nxt_state[5:0] = INT_MAR1;
+                nxt_state <= #`RD INT_MAR1;
         end
-        LEA:    nxt_state[5:0] = FETCH;
+        LEA:    nxt_state <= #`RD FETCH;
         TRAP:   nxt_state[5:0] = TRAP_CHK;
 
         ST_MEM: begin
-            if(ready)
-                    nxt_state[5:0] = FETCH;
-            else
-                    nxt_state[5:0] = nxt_state;
+                if(ready)
+                        nxt_state <= #`RD FETCH;
+                else
+                        nxt_state <= #`RD ST_MEM;
         end
         LDI_ACV: begin
-            if(acv)
-                    nxt_state[5:0] = ACV_2;
-            else
-                    nxt_state[5:0] = LDI_DEC;
+                if(acv)
+                        nxt_state <= #`RD ACV_2;
+                else
+                        nxt_state <= #`RD LDI_DEC;
         end
         FETCH: begin
-            if(interrupt)
-                    nxt_state[5:0] = INT_CHK;
-            else
-                    nxt_state[5:0] = FETCH_ACV;
+                if(acv)
+                        nxt_state <= #`RD INT_CHK;
+                else
+                        nxt_state <= #`RD FETCH_ACV;
         end
         STI_ACV: begin
-            if(acv)
-                    nxt_state[5:0] = ACV_5;
-            else
-                    nxt_state[5:0] = STI_DEC;
+                if(acv)
+                        nxt_state <= #`RD ACV_5;
+                else
+                        nxt_state <= #`RD STI_DEC;
         end
-        JSR_R_PC:   nxt_state[5:0] = FETCH;
-        JSR_O_PC:   nxt_state[5:0] = FETCH;
-        BR_O_PC:    nxt_state[5:0] = FETCH;
+        JSR_R_PC:       nxt_state <= #`RD FETCH;
+        JSR_O_PC:       nxt_state <= #`RD FETCH;
+        BR_O_PC:        nxt_state <= #`RD FETCH;
         STX_ACV: begin
-            if(acv)
-                nxt_state[5:0] = ACV_1;
-            else
-                nxt_state[5:0] = ST_MEM;
+                if(acv)
+                        nxt_state <= #`RD ACV_1;
+                else
+                        nxt_state <= #`RD ST_MEM;
         end
         LDI_DEC: begin
-        	if(ready)
-        		nxt_state[5:0] = LDI_DEC;
-        	else
-        		nxt_state[5:0] = LDI_MAR;
+                if(ready)
+                        nxt_state <= #`RD LDI_MAR;
+                else
+                        nxt_state <= #`RD LDI_DEC;
         end
         LDX_DEC: begin
-        	if(ready)
-        		nxt_state[5:0] = LDX_DEC;
-        	else
-        		nxt_state[5:0] = LDX_DR;
+                if(ready)
+                        nxt_state <= #`RD LDX_DR;
+                else
+                        nxt_state <= #`RD LDX_DEC;
         end
-        LDI_MAR:	nxt_state[5:0] = LDX_ACV;
-        LDX_DR:	nxt_state[5:0] = FETCH;
+        LDI_MAR:        nxt_state <= #`RD LDX_ACV;
+        LDX_DR: nxt_state <= #`RD FETCH;
         FETCH_MDR: begin
-        	if(ready)
-        		nxt_state[5:0] = FETCH_MDR;
-        	else
-        		nxt_state[5:0] = FETCH_IR;
+                if(ready)
+                        nxt_state <= #`RD FETCH_IR;
+                else
+                        nxt_state <= #`RD FETCH_MDR;
         end
         STI_DEC: begin
-        	if(ready)
-        		nxt_state[5:0] = STI_DEC;
-        	else
-        		nxt_state[5:0] = STI_MAR2;
+                if(ready)
+                        nxt_state <= #`RD STI_MAR2;
+                else
+                        nxt_state <= #`RD STI_DEC;
         end
-        FETCH_IR:	nxt_state[5:0] = DECODE;
-        STI_MAR2:	nxt_state[5:0] = STX_ACV;
-        DECODE:	nxt_state[5:0] = ir[15:12];
+        FETCH_IR:       nxt_state <= #`RD DECODE;
+        STI_MAR2:       nxt_state <= #`RD STX_ACV;
+        DECODE: nxt_state <= #`RD ir[15:12];
         FETCH_ACV: begin
-        	if(acv)
-        		nxt_state[5:0] = FETCH_MDR;
-        	else
-        		nxt_state[5:0] = ACV_4;
+                if(acv)
+                        nxt_state <= #`RD ACV_4;
+                else
+                        nxt_state <= #`RD FETCH_MDR;
         end
         RTI_CHK2: begin
-        	if(psr_15)
-        		nxt_state[5:0] = IDLE;
-        	else
-        		nxt_state[5:0] = RTI_S_SP;
+                if(psr_15)
+                        nxt_state <= #`RD RTI_S_SP;
+                else
+                        nxt_state <= #`RD IDLE;
         end
         LDX_ACV: begin
-        	if(acv)
-        		nxt_state[5:0] = LDX_DEC;
-        	else
-        		nxt_state[5:0] = ACV_3;
+                if(acv)
+                        nxt_state <= #`RD ACV_3;
+                else
+                        nxt_state <= #`RD LDX_DEC;
         end
         RTI_MDR1: begin
-        	if(ready)
-        		nxt_state[5:0] = RTI_MDR1;
-        	else
-        		nxt_state[5:0] = RTI_PC;
+                if(ready)
+                        nxt_state <= #`RD RTI_PC;
+                else
+                        nxt_state <= #`RD RTI_MDR1;
         end
-        INT_MAR1:	nxt_state[5:0] = INT_WR1;
-        RTI_PC:	nxt_state[5:0] = RTI_MAR2;
-        RTI_MAR2:	nxt_state[5:0] = RTI_MDR2;
+        INT_MAR1:       nxt_state <= #`RD INT_WR1;
+        RTI_PC: nxt_state <= #`RD RTI_MAR2;
+        RTI_MAR2:       nxt_state <= #`RD RTI_MDR2;
         RTI_MDR2: begin
-        	if(ready)
-        		nxt_state[5:0] = RTI_MDR2;
-        	else
-        		nxt_state[5:0] = RTI_PSR;
+                if(ready)
+                        nxt_state <= #`RD RTI_PSR;
+                else
+                        nxt_state <= #`RD RTI_MDR2;
         end
         INT_WR1: begin
-        	if(ready)
-        		nxt_state[5:0] = INT_WR1;
-        	else
-        		nxt_state[5:0] = INT_MDR2;
+                if(ready)
+                        nxt_state <= #`RD INT_MDR2;
+                else
+                        nxt_state <= #`RD INT_WR1;
         end
-        RTI_PSR:	nxt_state[5:0] = RTI_CHK2;
-        INT_MDR2:	nxt_state[5:0] = INT_MAR2;
-        RTI_VEC0:	nxt_state[5:0] = S_SSP_USP;
-        S_SSP_USP:	nxt_state[5:0] = INT_MAR1;
-        INT_MAR2:	nxt_state[5:0] = INT_WR2;
+        RTI_PSR:        nxt_state <= #`RD RTI_CHK2;
+        INT_MDR2:       nxt_state <= #`RD INT_MAR2;
+        RTI_VEC0:       nxt_state <= #`RD S_SSP_USP;
+        S_SSP_USP:      nxt_state <= #`RD INT_MAR1;
+        INT_MAR2:       nxt_state <= #`RD INT_WR2;
         TRAP_CHK: begin
-        	if(psr_15)
-        		nxt_state[5:0] = INT_MAR1;
-        	else
-        		nxt_state[5:0] = S_SSP_USP;
+                if(psr_15)
+                        nxt_state <= #`RD S_SSP_USP;
+                else
+                        nxt_state <= #`RD INT_MAR1;
         end
-        ACV_1:	nxt_state[5:0] = S_SSP_USP;
+        ACV_1:  nxt_state <= #`RD S_SSP_USP;
         INT_CHK: begin
-        	if(psr_15)
-        		nxt_state[5:0] = INT_MAR1;
-        	else
-        		nxt_state[5:0] = S_SSP_USP;
+                if(psr_15)
+                        nxt_state <= #`RD S_SSP_USP;
+                else
+                        nxt_state <= #`RD INT_MAR1;
         end
-        NOP_1:	nxt_state[5:0] = IDLE;
-        IDLE:	nxt_state[5:0] = FETCH;
+        NOP_1:  nxt_state <= #`RD IDLE;
+        IDLE:   nxt_state <= #`RD FETCH;
         INT_WR2: begin
-        	if(ready)
-        		nxt_state[5:0] = INT_WR2;
-        	else
-        		nxt_state[5:0] = INT_MAR3;
+                if(ready)
+                        nxt_state <= #`RD INT_MAR3;
+                else
+                        nxt_state <= #`RD INT_WR2;
         end
         INT_MDR3: begin
-        	if(ready)
-        		nxt_state[5:0] = INT_MDR3;
-        	else
-        		nxt_state[5:0] = INT_PCL;
+                if(ready)
+                        nxt_state <= #`RD INT_PCL;
+                else
+                        nxt_state <= #`RD INT_MDR3;
         end
-        INT_MAR3:	nxt_state[5:0] = INT_MDR3;
-        INT_PCL:	nxt_state[5:0] = FETCH;
-        ACV_2:	nxt_state[5:0] = S_SSP_USP;
-        ACV_3:	nxt_state[5:0] = S_SSP_USP;
-        NOP_2:	nxt_state[5:0] = IDLE;
-        RTI_S_SP:	nxt_state[5:0] = FETCH;
-        ACV_4:	nxt_state[5:0] = S_SSP_USP;
-        ACV_5:	nxt_state[5:0] = S_SSP_USP;
-        NOP_3:	nxt_state[5:0] = IDLE;
-        NOP_4:	nxt_state[5:0] = IDLE;
+        INT_MAR3:       nxt_state <= #`RD INT_MDR3;
+        INT_PCL:        nxt_state <= #`RD FETCH;
+        ACV_2:  nxt_state <= #`RD S_SSP_USP;
+        ACV_3:  nxt_state <= #`RD S_SSP_USP;
+        NOP_2:  nxt_state <= #`RD IDLE;
+        RTI_S_SP:       nxt_state <= #`RD FETCH;
+        ACV_4:  nxt_state <= #`RD S_SSP_USP;
+        ACV_5:  nxt_state <= #`RD S_SSP_USP;
+        NOP_3:  nxt_state <= #`RD IDLE;
+        NOP_4:  nxt_state <= #`RD IDLE;
     endcase
 end
 
