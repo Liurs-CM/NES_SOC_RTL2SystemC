@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/16 22:51
-// Last Modified : 2024/05/26 12:25
+// Last Modified : 2024/05/29 01:09
 // File Name     : device.v
 // Description   :
 //         
@@ -69,7 +69,8 @@ reg [15:0] kbsr;
 reg [15:0] ddr;
 reg [15:0] dsr;
 reg ready;
-reg [7:0] mem[MEM_DEPTH*MEM_WIDTH:0];
+//reg [7:0] mem[MEM_DEPTH*MEM_WIDTH:0];
+reg [15:0] mem[MEM_DEPTH*MEM_WIDTH:0];
 wire [7:0]                        int_pl                          ; // WIRE_NEW
 /*autodef*/
 //Start of automatic define
@@ -95,7 +96,8 @@ wire                            mem_en                          ;
 assign in_mux[15:0] = (mar[15:0] == MAR_KBSR) ? kbsr[15:0] :
                       (mar[15:0] == MAR_KBDR) ? kbdr[15:0] :
                       (mar[15:0] == MAR_DSR) ? dsr[15:0] :
-                      {mem[mar+1], mem[mar]};
+                      mem[mar];
+//                      {mem[mar+1], mem[mar]};
 assign mdr_mux[15:0] = mio_en ? in_mux[15:0] : bus[15:0];
 always@(posedge clk or negedge rst_n) begin
     if(!rst_n)begin
@@ -167,15 +169,27 @@ end
 genvar i, j;
 generate 
     for(i=0;i<MEM_DEPTH;i=i+1) begin: ram_depth
-        for(j=0;j<MEM_WIDTH;j=j+2) begin: ram_width
+        for(j=0;j<MEM_WIDTH;j=j+8) begin: ram_width
             always@(posedge clk or negedge rst_n) begin
                 if(!rst_n)begin
-                     mem[i*MEM_WIDTH+j] <= #`RD 8'h0;
-                     mem[i*MEM_WIDTH+j+1] <= #`RD 8'h0;
+                     mem[i*MEM_WIDTH+j] <= #`RD 16'h0;
+                     mem[i*MEM_WIDTH+j+1] <= #`RD 16'h0;
+                     mem[i*MEM_WIDTH+j+2] <= #`RD 16'h0;
+                     mem[i*MEM_WIDTH+j+3] <= #`RD 16'h0;
+                     mem[i*MEM_WIDTH+j+4] <= #`RD 16'h0;
+                     mem[i*MEM_WIDTH+j+5] <= #`RD 16'h0;
+                     mem[i*MEM_WIDTH+j+6] <= #`RD 16'h0;
+                     mem[i*MEM_WIDTH+j+7] <= #`RD 16'h0;
                 end
                 else if (mem_en && r_w==WRITE && (i*MEM_WIDTH+j)==mar[15:0])begin
-                     mem[i*MEM_WIDTH+j] <= #`RD mdr[7:0];
-                     mem[i*MEM_WIDTH+j+1] <= #`RD mdr[15:8];
+                     mem[i*MEM_WIDTH+j] <= #`RD mdr[15:0];
+                     mem[i*MEM_WIDTH+j+1] <= #`RD mdr[15:0];
+                     mem[i*MEM_WIDTH+j+2] <= #`RD mdr[15:0];
+                     mem[i*MEM_WIDTH+j+3] <= #`RD mdr[15:0];
+                     mem[i*MEM_WIDTH+j+4] <= #`RD mdr[15:0];
+                     mem[i*MEM_WIDTH+j+5] <= #`RD mdr[15:0];
+                     mem[i*MEM_WIDTH+j+6] <= #`RD mdr[15:0];
+                     mem[i*MEM_WIDTH+j+7] <= #`RD mdr[15:0];
                 end
             end
         end
@@ -187,14 +201,22 @@ localparam PL_NUM   = 8;
 //genvar i;
 generate
     for(i=0;i<PL_NUM;i=i+1) begin: intc_pl
-        assign int_vec[i] =  (&mem[INT_BASE_ADDR+4'h1+i<<4][7:6]) ||
-                            (&mem[INT_BASE_ADDR+4'h3+i<<4][7:6]) ||
-                            (&mem[INT_BASE_ADDR+4'h5+i<<4][7:6]) ||
-                            (&mem[INT_BASE_ADDR+4'h7+i<<4][7:6]) ||
-                            (&mem[INT_BASE_ADDR+4'h9+i<<4][7:6]) ||
-                            (&mem[INT_BASE_ADDR+4'hb+i<<4][7:6]) ||
-                            (&mem[INT_BASE_ADDR+4'hd+i<<4][7:6]) ||
-                            (&mem[INT_BASE_ADDR+4'hf+i<<4][7:6]) ;
+        assign int_vec[i] = (&mem[INT_BASE_ADDR+4'h0+i<<4][15:14]) ||
+                            (&mem[INT_BASE_ADDR+4'h1+i<<4][15:14]) ||
+                            (&mem[INT_BASE_ADDR+4'h2+i<<4][15:14]) ||
+                            (&mem[INT_BASE_ADDR+4'h3+i<<4][15:14]) ||
+                            (&mem[INT_BASE_ADDR+4'h4+i<<4][15:14]) ||
+                            (&mem[INT_BASE_ADDR+4'h5+i<<4][15:14]) ||
+                            (&mem[INT_BASE_ADDR+4'h6+i<<4][15:14]) ||
+                            (&mem[INT_BASE_ADDR+4'h7+i<<4][15:14]) ||
+                            (&mem[INT_BASE_ADDR+4'h8+i<<4][15:14]) ||
+                            (&mem[INT_BASE_ADDR+4'h9+i<<4][15:14]) ||
+                            (&mem[INT_BASE_ADDR+4'ha+i<<4][15:14]) ||
+                            (&mem[INT_BASE_ADDR+4'hb+i<<4][15:14]) ||
+                            (&mem[INT_BASE_ADDR+4'hc+i<<4][15:14]) ||
+                            (&mem[INT_BASE_ADDR+4'hd+i<<4][15:14]) ||
+                            (&mem[INT_BASE_ADDR+4'he+i<<4][15:14]) ||
+                            (&mem[INT_BASE_ADDR+4'hf+i<<4][15:14]) ;
     end
 endgenerate
 assign int_priority[2:0] =  int_vec[7] ? 3'h7 :
