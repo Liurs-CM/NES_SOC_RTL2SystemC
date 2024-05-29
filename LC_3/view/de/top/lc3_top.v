@@ -5,7 +5,7 @@
 // Email         : liurs@njust.edu.cn
 // Website       : liurs.cn
 // Created On    : 2024/05/23 23:30
-// Last Modified : 2024/05/26 12:29
+// Last Modified : 2024/05/29 19:23
 // File Name     : lc3_top.v
 // Description   :
 //         
@@ -49,7 +49,7 @@ wire                            reg_n                           ;
 wire                            reg_z                           ;
 wire                            reg_p                           ;
 wire                            acv                             ;
-wire                            interrupt                       ; // WIRE_NEW
+wire                            interrupt                       ;
 wire                            ready                           ;
 wire                            priv                            ;
 wire                            ld_mar                          ;
@@ -92,7 +92,6 @@ wire [15:0]                     mdr                             ;
 wire [2:0]                      int_priority                    ;
 wire [7:0]                      int_vec                         ;
 wire [15:0]                     table_vector                    ;
-wire                            psr_mux_sel                     ;
 wire [2:0]                      reg_prority                     ;
 wire [15:0]                     sr1_out                         ;
 wire [15:0]                     stack_point                     ;
@@ -104,8 +103,7 @@ wire [15:0]                     psr                             ;
 wire [15:0]                     sr2_out                         ;
 wire [15:0]                     reg_pc                          ;
 wire [15:0]                     ea                              ;
-wire                            gate_pc_en                      ;
-//WIRE_DEL: Wire int has been deleted.
+//WIRE_DEL: Wire psr_mux_sel has been deleted.
 //End of automatic wire
 //End of automatic define
 
@@ -192,7 +190,7 @@ intc u_intc(/*autoinst*/
         .ld_priv                (ld_priv                        ), //input
         .ld_priority            (ld_priority                    ), //input
         .set_priv               (set_priv                       ), //input
-        .psr_mux_sel            (psr_mux_sel                    ), //input
+        .psr_mux_sel            (psrmux                         ), //input
         .ld_acv                 (ld_acv                         ), //input
         .int_priority           (int_priority[2:0]              ), //input[2:0]
         .bus                    (bus[15:0]                      ), //input[15:0]
@@ -267,7 +265,7 @@ data_matrix_nzp_load u_data_matrix_nzp_load(/*autoinst*/
         .clk                    (clk                            ), //input
         .rst_n                  (rst_n                          ), //input
         .ld_cc                  (ld_cc                          ), //input
-        .psr_mux_sel            (psr_mux_sel                    ), //input
+        .psr_mux_sel            (psrmux                         ), //input
         .bus                    (bus[15:0]                      ), //input[15:0]
         .reg_n                  (reg_n                          ), //output
         .reg_z                  (reg_z                          ), //output
