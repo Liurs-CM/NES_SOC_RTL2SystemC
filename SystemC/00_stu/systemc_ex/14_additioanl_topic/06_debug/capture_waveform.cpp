@@ -1,0 +1,9 @@
+sc_trace_file* tracefile;
+tracefile = sc_create_vcd_trace_file(tracefile_name);
+if (!tracefile) cout <<"There was an error."<<endl;
+…
+sc_trace(tracefile,signal_name,"signal_name");
+…
+sc_start(); // data is collected
+…
+sc_close_vcd_trace_file(tracefile);
